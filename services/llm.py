@@ -15,7 +15,11 @@ OPENAI_COMPAT = {
                "url": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", "label": "Google Gemini"},
     "groq": {"key": "GROQ_API_KEY", "model_env": "GROQ_MODEL", "model": "llama-3.3-70b-versatile",
              "url": "https://api.groq.com/openai/v1/chat/completions", "label": "Groq"},
+    # Кілтсіз жұмыс істейді (бір IP-ден 30 секундта 1 жауап). Тегін кілт шектеуді алады: enter.pollinations.ai
+    "pollinations": {"key": "POLLINATIONS_API_KEY", "model_env": "POLLINATIONS_MODEL", "model": "openai",
+                     "url": "https://text.pollinations.ai/openai", "label": "Pollinations (тегін)", "keyless": True},
 }
+_cooldown = {}  # провайдер → осы уақытқа дейін сұрау жібермейміз (жылдамдық шектеуі)
 LABELS = {"anthropic": "Anthropic Claude", "ollama": "Ollama (жергілікті)", **{k: v["label"] for k, v in OPENAI_COMPAT.items()}}
 
 
@@ -38,8 +42,8 @@ def status():
         return _status_cache["value"]
     pref = _provider_pref()
     value = {"provider": None, "model": None, "local": False}
-    compat = next((name for name in OPENAI_COMPAT
-                   if pref in ("auto", name) and os.environ.get(OPENAI_COMPAT[name]["key"])), None)
+    compat = next((name for name, cfg in OPENAI_COMPAT.items()
+                   if pref in ("auto", name) and (os.environ.get(cfg["key"]) or cfg.get("keyless"))), None)
     if pref in ("auto", "anthropic") and os.environ.get("ANTHROPIC_API_KEY"):
         value = {"provider": "anthropic", "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5"), "local": False}
     elif compat:
@@ -97,9 +101,14 @@ def ask_json(system: str, user: str, max_tokens: int = 700, timeout: int = 60):
             return _extract_json(text)
         if st["provider"] in OPENAI_COMPAT:
             cfg = OPENAI_COMPAT[st["provider"]]
+            if time.time() < _cooldown.get(st["provider"], 0):
+                return None
+            headers = {"Content-Type": "application/json"}
+            if os.environ.get(cfg["key"]):
+                headers["Authorization"] = "Bearer " + os.environ[cfg["key"]]
             r = requests.post(
                 cfg["url"],
-                headers={"Authorization": "Bearer " + os.environ[cfg["key"]], "Content-Type": "application/json"},
+                headers=headers,
                 json={
                     "model": st["model"],
                     "max_tokens": max(max_tokens, 2000),  # ойлайтын модельдерге жауапқа орын қалуы үшін
@@ -108,6 +117,9 @@ def ask_json(system: str, user: str, max_tokens: int = 700, timeout: int = 60):
                 },
                 timeout=min(timeout, 40),
             )
+            if r.status_code in (402, 429):
+                _cooldown[st["provider"]] = time.time() + 30  # шектеу кезінде келесі сұрауларды күттірмейміз
+                return None
             r.raise_for_status()
             return _extract_json(r.json()["choices"][0]["message"].get("content") or "")
         if st["provider"] == "ollama":

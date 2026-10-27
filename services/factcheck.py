@@ -73,6 +73,7 @@ def text_signals(text: str):
 SYSTEM = """You are a careful fact-checking assistant for a Kazakh-language website.
 You receive a CLAIM and EVIDENCE snippets retrieved from Wikipedia (they may be irrelevant).
 Judge the claim ONLY with the evidence and well-established general knowledge. Never invent sources.
+Your memory may be outdated: when the evidence states a more recent fact, trust the evidence.
 If the evidence does not clearly address the claim, answer "insufficient".
 Return strict JSON only:
 {"verdict": "likely_true" | "likely_false" | "insufficient",
