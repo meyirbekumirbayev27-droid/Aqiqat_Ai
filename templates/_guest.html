@@ -1,0 +1,6 @@
+<div class="auth-or"><span>немесе</span></div>
+<form method="post" action="{{ url_for('guest') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <input type="hidden" name="next" value="{{ request.args.get('next', request.form.get('next', '')) }}">
+  <button type="submit" class="btn btn-ghost" style="width:100%">🚀 Тіркелмей, қонақ ретінде кіру</button>
+</form>

@@ -29,10 +29,11 @@
           <button type="button" class="pw-toggle" aria-label="Құпиясөзді көрсету">{{ m.icon('eye') }}</button>
         </div>
       </div>
-      <label class="check"><input type="checkbox" name="remember" value="1"> Мені есте сақта (14 күн)</label>
-      <button type="submit" class="btn btn-primary" style="width:100%">Кіру {{ m.icon('arrow') }}</button>
+      <button type="submit" class="btn btn-primary" style="width:100%;margin-top:6px">Кіру {{ m.icon('arrow') }}</button>
+      <p style="margin:10px 0 0;font-size:13px;color:var(--dim);text-align:center">Жүйеде 30 күн сақталасыз — қайта-қайта кірудің қажеті жоқ.</p>
     </form>
-    <p class="auth-alt">Аккаунтыңыз жоқ па? <a href="{{ url_for('register') }}">Тіркелу</a></p>
+    {% include '_guest.html' %}
+    <p class="auth-alt">Аккаунтыңыз жоқ па? <a href="{{ url_for('register', next=request.args.get('next', '')) }}">Тіркелу</a></p>
   </div>
 </div>
 {% endblock %}

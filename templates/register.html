@@ -14,34 +14,25 @@
   </div>
   <div class="card auth-card">
     <h1>Тіркелу</h1>
-    <p>Бірнеше секундта аккаунт ашыңыз.</p>
+    <p>Тек логин мен құпиясөз — 10 секунд.</p>
     <form method="post" novalidate>
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-      <div class="field">
-        <label for="display_name">Аты-жөніңіз</label>
-        <input id="display_name" name="display_name" class="input" maxlength="40" autocomplete="name" value="{{ display_name or '' }}" placeholder="Мысалы: Айгерім">
-      </div>
+      <input type="hidden" name="next" value="{{ request.args.get('next', request.form.get('next', '')) }}">
       <div class="field">
         <label for="username">Логин</label>
-        <input id="username" name="username" class="input" maxlength="32" autocomplete="username" required value="{{ username or '' }}" placeholder="aigerim_01">
-        <span class="hint">3–32 таңба: латын әріптері, сандар, _ . -</span>
+        <input id="username" name="username" class="input" maxlength="32" autocomplete="username" autocapitalize="none" required value="{{ username or '' }}" placeholder="мысалы: aigerim" autofocus>
       </div>
       <div class="field">
         <label for="password">Құпиясөз</label>
         <div class="pw-field">
-          <input id="password" name="password" type="password" class="input" autocomplete="new-password" required minlength="8">
+          <input id="password" name="password" type="password" class="input" autocomplete="new-password" required minlength="6" placeholder="кемінде 6 таңба">
           <button type="button" class="pw-toggle" aria-label="Құпиясөзді көрсету">{{ m.icon('eye') }}</button>
         </div>
-        <div class="pw-strength"><i id="pw-meter"></i></div>
-        <span class="hint" id="pw-hint">Кемінде 8 таңба, әріп пен сан болуы керек.</span>
-      </div>
-      <div class="field">
-        <label for="confirm">Құпиясөзді қайталаңыз</label>
-        <input id="confirm" name="confirm" type="password" class="input" autocomplete="new-password" required>
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%;margin-top:6px">Аккаунт ашу {{ m.icon('arrow') }}</button>
     </form>
-    <p class="auth-alt">Аккаунтыңыз бар ма? <a href="{{ url_for('login') }}">Кіру</a></p>
+    {% include '_guest.html' %}
+    <p class="auth-alt">Аккаунтыңыз бар ма? <a href="{{ url_for('login', next=request.args.get('next', '')) }}">Кіру</a></p>
   </div>
 </div>
 {% endblock %}

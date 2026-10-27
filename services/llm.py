@@ -1,4 +1,4 @@
-"""AI модельге қосылу: Anthropic API (ANTHROPIC_API_KEY) немесе жергілікті Ollama.
+"""AI модельге қосылу: Anthropic, тегін Google Gemini / Groq немесе жергілікті Ollama.
 Кілттер тек серверде сақталады. Модель қолжетімсіз болса None қайтарылады."""
 import json
 import os
@@ -8,6 +8,15 @@ import time
 import requests
 
 _status_cache = {"t": 0.0, "value": None}
+
+# Тегін деңгейі бар, OpenAI-үйлесімді API-лар. Кілтті алу: Gemini — aistudio.google.com/apikey, Groq — console.groq.com/keys
+OPENAI_COMPAT = {
+    "gemini": {"key": "GEMINI_API_KEY", "model_env": "GEMINI_MODEL", "model": "gemini-flash-latest",
+               "url": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", "label": "Google Gemini"},
+    "groq": {"key": "GROQ_API_KEY", "model_env": "GROQ_MODEL", "model": "llama-3.3-70b-versatile",
+             "url": "https://api.groq.com/openai/v1/chat/completions", "label": "Groq"},
+}
+LABELS = {"anthropic": "Anthropic Claude", "ollama": "Ollama (жергілікті)", **{k: v["label"] for k, v in OPENAI_COMPAT.items()}}
 
 
 def _provider_pref():
@@ -29,8 +38,13 @@ def status():
         return _status_cache["value"]
     pref = _provider_pref()
     value = {"provider": None, "model": None, "local": False}
+    compat = next((name for name in OPENAI_COMPAT
+                   if pref in ("auto", name) and os.environ.get(OPENAI_COMPAT[name]["key"])), None)
     if pref in ("auto", "anthropic") and os.environ.get("ANTHROPIC_API_KEY"):
         value = {"provider": "anthropic", "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5"), "local": False}
+    elif compat:
+        cfg = OPENAI_COMPAT[compat]
+        value = {"provider": compat, "model": os.environ.get(cfg["model_env"], cfg["model"]), "local": False}
     # Serverless ортада жергілікті Ollama жоқ: оны тек анық сұралса ғана іздейміз
     elif pref == "ollama" or (pref == "auto" and not os.environ.get("VERCEL")):
         try:
@@ -41,6 +55,7 @@ def status():
                 value = {"provider": "ollama", "model": model if model in names else names[0], "local": True}
         except Exception:
             pass
+    value["label"] = LABELS.get(value["provider"])
     _status_cache.update(t=now, value=value)
     return value
 
@@ -80,6 +95,21 @@ def ask_json(system: str, user: str, max_tokens: int = 700, timeout: int = 60):
             r.raise_for_status()
             text = "".join(b.get("text", "") for b in r.json().get("content", []) if b.get("type") == "text")
             return _extract_json(text)
+        if st["provider"] in OPENAI_COMPAT:
+            cfg = OPENAI_COMPAT[st["provider"]]
+            r = requests.post(
+                cfg["url"],
+                headers={"Authorization": "Bearer " + os.environ[cfg["key"]], "Content-Type": "application/json"},
+                json={
+                    "model": st["model"],
+                    "max_tokens": max(max_tokens, 2000),  # ойлайтын модельдерге жауапқа орын қалуы үшін
+                    "temperature": 0.1,
+                    "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+                },
+                timeout=min(timeout, 40),
+            )
+            r.raise_for_status()
+            return _extract_json(r.json()["choices"][0]["message"].get("content") or "")
         if st["provider"] == "ollama":
             r = requests.post(
                 _ollama_url() + "/api/chat",

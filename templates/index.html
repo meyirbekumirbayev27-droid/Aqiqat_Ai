@@ -64,8 +64,13 @@
         <div><b>Тексеру үшін жүйеге кіріңіз</b><small>Тіркелгеннен кейін барлық алты құрал мен тексеру тарихы қолжетімді болады.</small></div>
       </div>
       <div class="hero-cta" style="margin-top:18px">
-        <a href="{{ url_for('login', next='/#check') }}" class="btn btn-primary">Кіру</a>
-        <a href="{{ url_for('register') }}" class="btn btn-ghost">Тіркелу</a>
+        <form method="post" action="{{ url_for('guest') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="next" value="/#check">
+          <button type="submit" class="btn btn-primary">🚀 Бірден бастау (қонақ)</button>
+        </form>
+        <a href="{{ url_for('login', next='/#check') }}" class="btn btn-ghost">Кіру</a>
+        <a href="{{ url_for('register', next='/#check') }}" class="btn btn-ghost">Тіркелу</a>
       </div>
       {% endif %}
     </div>

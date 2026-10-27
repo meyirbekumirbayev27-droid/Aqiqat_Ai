@@ -130,7 +130,7 @@ window.AQ = (function () {
       aiHtml = `<p><span class="badge ${esc(r.ai.verdict)}">${esc(label)}</span> <span class="badge info">модель сенімділігі ${Number(r.ai.confidence)}%</span></p>`;
       aiHtml += r.ai.explanation ? `<p>${esc(r.ai.explanation)}</p>` : `<p style="color:var(--muted)">Модель (${esc(r.ai.model)}) табылған дереккөз үзінділерін мәлімдемемен салыстырды${r.ai.used.length ? `: ${r.ai.used.length} материал ескерілді (төменде белгіленген)` : ''}.</p>`;
       aiHtml += r.ai.local
-        ? '<p style="color:var(--dim);font-size:13px;margin:0">Бұл — жергілікті шағын модельдің пікірі. Ол жиі қателесетіндіктен, қорытынды тұжырымға әсер етпейді. Дәлірек талдау үшін серверге Anthropic API кілтін қосыңыз.</p>'
+        ? '<p style="color:var(--dim);font-size:13px;margin:0">Бұл — жергілікті шағын модельдің пікірі. Ол жиі қателесетіндіктен, қорытынды тұжырымға әсер етпейді. Дәлірек талдау үшін серверге тегін Gemini API кілтін қосыңыз.</p>'
         : '<p style="color:var(--dim);font-size:13px;margin:0">AI түсіндірмесі — тексерілмеген пікір. Сыртқы дереккөздермен салыстырыңыз.</p>';
     } else if (r.ai_status && r.ai_status.provider) {
       aiHtml = '<p style="color:var(--muted)">AI моделі бұл сұрауға жарамды жауап қайтармады, сондықтан тұжырым тек белгілер мен дереккөздерге негізделді.</p>';

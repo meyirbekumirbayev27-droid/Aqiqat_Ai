@@ -20,10 +20,10 @@
       <b>AI моделінің күйі:</b>
       {% if ai.provider %}
       <span class="badge good" style="margin-left:6px">Қосулы</span>
-      <p style="margin:10px 0 0">Провайдер: {{ 'Anthropic Claude' if ai.provider == 'anthropic' else 'Ollama (жергілікті)' }} · Модель: <span class="mono">{{ ai.model }}</span></p>
+      <p style="margin:10px 0 0">Провайдер: {{ ai.label }} · Модель: <span class="mono">{{ ai.model }}</span></p>
       {% else %}
       <span class="badge medium" style="margin-left:6px">Қосылмаған</span>
-      <p style="margin:10px 0 0">Ақпаратты тексеру тек мәтін белгілері мен Wikipedia дереккөздеріне сүйенеді. AI қосу үшін серверде <span class="mono">.env</span> файлына <span class="mono">ANTHROPIC_API_KEY</span> қойыңыз немесе Ollama іске қосыңыз.</p>
+      <p style="margin:10px 0 0">Ақпаратты тексеру тек мәтін белгілері мен Wikipedia дереккөздеріне сүйенеді. Тегін AI қосу үшін серверге <span class="mono">GEMINI_API_KEY</span> (aistudio.google.com/apikey) немесе <span class="mono">GROQ_API_KEY</span> айнымалысын қосыңыз.</p>
       {% endif %}
     </div>
 

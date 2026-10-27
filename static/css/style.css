@@ -495,6 +495,8 @@ mark.m-credentials { background: rgba(255, 92, 120, .32); box-shadow: inset 0 -2
 .pw-toggle svg { width: 20px; height: 20px; }
 .check { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); cursor: pointer; margin: 4px 0 22px; }
 .check input { width: 18px; height: 18px; accent-color: var(--cyan); }
+.auth-or { display: flex; align-items: center; gap: 12px; margin: 20px 0 16px; color: var(--dim); font-size: 13px; }
+.auth-or::before, .auth-or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .auth-alt { text-align: center; margin-top: 22px; color: var(--muted); font-size: 14.5px; }
 .auth-side h2 { font-family: var(--font-display); font-size: clamp(28px, 3vw, 44px); line-height: 1.15; margin: 18px 0; font-weight: 600; }
 .auth-side ul { list-style: none; padding: 0; margin: 26px 0 0; display: flex; flex-direction: column; gap: 14px; }

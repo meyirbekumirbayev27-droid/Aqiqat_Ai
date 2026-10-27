@@ -1,4 +1,5 @@
 """AQIQAT AI — жалған ақпаратты анықтауға көмектесетін веб-қосымша."""
+import hashlib
 import json
 import os
 import re
@@ -36,8 +37,12 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def secret_key():
+    """Сессия кілті барлық серверлік даналарда бірдей болуы керек, әйтпесе пайдаланушы жүйеден шығып қалады."""
     if os.environ.get("SECRET_KEY"):
         return os.environ["SECRET_KEY"]
+    if dbm.database_url():
+        # Дерекқор мекенжайы құпия және барлық даналарда бірдей — кілтті содан туындатамыз
+        return hashlib.sha256(("aqiqat-session:" + dbm.database_url()).encode()).hexdigest()
     path = DATA_DIR / "secret_key"
     if not path.exists():
         path.write_text(secrets.token_hex(32), encoding="utf-8")
@@ -51,7 +56,8 @@ app.config.update(
     MAX_CONTENT_LENGTH=61 * 1024 * 1024,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    PERMANENT_SESSION_LIFETIME=60 * 60 * 24 * 14,
+    SESSION_COOKIE_SECURE=IS_SERVERLESS,
+    PERMANENT_SESSION_LIFETIME=60 * 60 * 24 * 30,
 )
 app.json.sort_keys = False
 dbm.init_db(app.config["DATABASE"])
@@ -87,6 +93,8 @@ FEATURES = [
 @app.before_request
 def load_user():
     g.user = None
+    if request.endpoint == "static":
+        return  # статикалық файлдар үшін дерекқорға қосылмаймыз
     uid = session.get("uid")
     if uid:
         row = dbm.get_db().execute("SELECT id, username, display_name, created_at FROM users WHERE id = ?", (uid,)).fetchone()
@@ -289,14 +297,10 @@ def login():
         if _throttled(key):
             flash("Тым көп сәтсіз әрекет. 5 минуттан кейін қайталап көріңіз.", "error")
             return render_template("login.html", username=username), 429
-        row = dbm.get_db().execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+        row = dbm.get_db().execute("SELECT * FROM users WHERE username = ?", (username.lower(),)).fetchone()
         if row and check_password_hash(row["password_hash"], password):
             _failed.pop(key, None)
-            csrf = session.get("csrf")
-            session.clear()
-            session["uid"] = row["id"]
-            session["csrf"] = csrf or secrets.token_urlsafe(32)
-            session.permanent = bool(request.form.get("remember"))
+            _start_session(row["id"])
             flash(f"Қош келдіңіз, {row['display_name']}!", "success")
             return redirect(_safe_next(request.form.get("next")))
         fails, _ = _failed.get(key, (0, 0))
@@ -312,35 +316,46 @@ def register():
         return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form.get("username", "").strip()
-        display = request.form.get("display_name", "").strip() or username
         password = request.form.get("password", "")
-        confirm = request.form.get("confirm", "")
         errors = []
-        if not re.fullmatch(r"[A-Za-z0-9_.\-]{3,32}", username):
-            errors.append("Логин 3–32 таңбадан тұруы керек: латын әріптері, сандар, _ . -")
-        if len(display) > 40:
-            errors.append("Аты-жөні 40 таңбадан аспауы керек.")
-        if len(password) < 8 or not re.search(r"[^\W\d_]", password) or not re.search(r"\d", password):
-            errors.append("Құпиясөз кемінде 8 таңба, оның ішінде әріп пен сан болуы керек.")
-        if password != confirm:
-            errors.append("Құпиясөздер сәйкес келмейді.")
+        if not re.fullmatch(r"[\w.\-]{3,32}", username):
+            errors.append("Логин 3–32 таңбадан тұруы керек: әріптер, сандар, _ . - (бос орынсыз).")
+        if len(password) < 6:
+            errors.append("Құпиясөз кемінде 6 таңба болуы керек.")
         db = dbm.get_db()
-        if not errors and db.execute("SELECT 1 FROM users WHERE username = ?", (username,)).fetchone():
+        if not errors and db.execute("SELECT 1 FROM users WHERE username = ?", (username.lower(),)).fetchone():
             errors.append("Бұл логин бос емес. Басқасын таңдаңыз.")
         if errors:
             for e in errors:
                 flash(e, "error")
-            return render_template("register.html", username=username, display_name=display), 400
-        cur = db.execute("INSERT INTO users (username, display_name, password_hash) VALUES (?, ?, ?)",
-                         (username, display, generate_password_hash(password)))
-        db.commit()
-        csrf = session.get("csrf")
-        session.clear()
-        session["uid"] = cur.lastrowid
-        session["csrf"] = csrf or secrets.token_urlsafe(32)
+            return render_template("register.html", username=username), 400
+        uid = dbm.insert("INSERT INTO users (username, display_name, password_hash, created_at) VALUES (?, ?, ?, ?)",
+                         (username.lower(), username, generate_password_hash(password), dbm.now_str()))
+        _start_session(uid)
         flash("Тіркелу сәтті өтті! AQIQAT AI-ға қош келдіңіз.", "success")
-        return redirect(url_for("index"))
+        return redirect(_safe_next(request.form.get("next")))
     return render_template("register.html")
+
+
+@app.route("/guest", methods=["POST"])
+def guest():
+    """Бір батырмамен кіру: уақытша қонақ аккаунты жасалады."""
+    if g.user:
+        return redirect(url_for("index"))
+    name = f"qonaq-{secrets.token_hex(3)}"
+    uid = dbm.insert("INSERT INTO users (username, display_name, password_hash, created_at) VALUES (?, ?, ?, ?)",
+                     (name, "Қонақ", generate_password_hash(secrets.token_urlsafe(24)), dbm.now_str()))
+    _start_session(uid)
+    flash("Қонақ ретінде кірдіңіз. Тарихыңыз осы браузерде 30 күн сақталады.", "success")
+    return redirect(_safe_next(request.form.get("next")))
+
+
+def _start_session(uid):
+    csrf = session.get("csrf")
+    session.clear()
+    session["uid"] = uid
+    session["csrf"] = csrf or secrets.token_urlsafe(32)
+    session.permanent = True  # браузер жабылса да 30 күн жүйеде қалады
 
 
 @app.route("/logout", methods=["POST"])
@@ -498,12 +513,10 @@ def api_quiz_answer():
         if state["correct"] == len(state["ids"]):
             unlock("perfect")
             payload["new_achievements"] = new_ach
-        db = dbm.get_db()
-        db.execute("INSERT INTO quiz_results (user_id, score, correct, total, best_streak, achievements) "
-                   "VALUES (?, ?, ?, ?, ?, ?)",
+        dbm.insert("INSERT INTO quiz_results (user_id, score, correct, total, best_streak, achievements, created_at) "
+                   "VALUES (?, ?, ?, ?, ?, ?, ?)",
                    (g.user["id"], state["score"], state["correct"], len(state["ids"]), state["best_streak"],
-                    json.dumps(state["achievements"])))
-        db.commit()
+                    json.dumps(state["achievements"]), dbm.now_str()))
         payload["summary"] = {"score": state["score"], "correct": state["correct"], "total": len(state["ids"]),
                               "best_streak": state["best_streak"],
                               "achievements": [dict(quiz.ACHIEVEMENTS[k], key=k) for k in state["achievements"]]}
@@ -521,7 +534,7 @@ def api_quiz_answer():
 def api_leaderboard():
     rows = dbm.get_db().execute(
         "SELECT u.display_name AS name, MAX(q.score) AS score FROM quiz_results q JOIN users u ON u.id = q.user_id "
-        "GROUP BY q.user_id ORDER BY score DESC LIMIT 10").fetchall()
+        "GROUP BY q.user_id, u.display_name ORDER BY score DESC LIMIT 10").fetchall()
     return jsonify([dict(r) for r in rows])
 
 
