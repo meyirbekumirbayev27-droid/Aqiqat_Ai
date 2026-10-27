@@ -28,21 +28,26 @@ def load_env():
                 os.environ.setdefault(k.strip(), v.strip().strip("\"'"))
 
 
+load_env()
+# Vercel сияқты serverless ортада жоба папкасы тек оқуға арналған — жазуға тек /tmp рұқсат етілген
+IS_SERVERLESS = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
+DATA_DIR = Path(os.environ.get("DATA_DIR") or ("/tmp/aqiqat" if IS_SERVERLESS else BASE_DIR / "instance"))
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
 def secret_key():
     if os.environ.get("SECRET_KEY"):
         return os.environ["SECRET_KEY"]
-    path = BASE_DIR / "instance" / "secret_key"
-    path.parent.mkdir(exist_ok=True)
+    path = DATA_DIR / "secret_key"
     if not path.exists():
         path.write_text(secrets.token_hex(32), encoding="utf-8")
     return path.read_text(encoding="utf-8").strip()
 
 
-load_env()
 app = Flask(__name__)
 app.config.update(
     SECRET_KEY=secret_key(),
-    DATABASE=str(BASE_DIR / "instance" / "aqiqat.db"),
+    DATABASE=os.environ.get("DATABASE_PATH") or str(DATA_DIR / "aqiqat.db"),
     MAX_CONTENT_LENGTH=61 * 1024 * 1024,
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",

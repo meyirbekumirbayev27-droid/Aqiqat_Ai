@@ -31,7 +31,8 @@ def status():
     value = {"provider": None, "model": None, "local": False}
     if pref in ("auto", "anthropic") and os.environ.get("ANTHROPIC_API_KEY"):
         value = {"provider": "anthropic", "model": os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5-5"), "local": False}
-    elif pref in ("auto", "ollama"):
+    # Serverless ортада жергілікті Ollama жоқ: оны тек анық сұралса ғана іздейміз
+    elif pref == "ollama" or (pref == "auto" and not os.environ.get("VERCEL")):
         try:
             r = requests.get(_ollama_url() + "/api/tags", timeout=2)
             names = [m.get("name") for m in r.json().get("models", [])]
