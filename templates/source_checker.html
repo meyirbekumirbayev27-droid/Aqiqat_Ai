@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Дереккөзді тексеру — AQIQAT AI{% endblock %}
+{% block body_class %}page-source{% endblock %}
+{% block content %}
+<div class="container tool-layout">
+  {{ m.tool_sidebar('source') }}
+  <div>
+    {{ m.tool_header(FEATURES[0], 'Source Checker', 'Ақпарат дереккөзін тексеру',
+       'Сайттың, жаңалықтың немесе онлайн жарияланымның шығу тегін, авторын, жарияланған күнін және сенімділік белгілерін зерттеңіз.', 'browser') }}
+    <div class="card checker">
+      <form id="src-form" novalidate>
+        <div class="field">
+          <label for="src-url">Сайт немесе мақала сілтемесі (URL)</label>
+          <input id="src-url" class="input" type="text" inputmode="url" autocomplete="off" placeholder="https://www.example.kz/news/..." maxlength="2000" required>
+          <span class="hint">Тек ашық интернеттегі http/https беттер тексеріледі.</span>
+        </div>
+        <div class="examples">
+          <button type="button" class="chip-btn" data-fill="src-url" data-text="https://www.gov.kz">gov.kz</button>
+          <button type="button" class="chip-btn" data-fill="src-url" data-text="https://kk.wikipedia.org/wiki/Абай_Құнанбайұлы">kk.wikipedia.org</button>
+          <button type="button" class="chip-btn" data-fill="src-url" data-text="https://www.bbc.com/news">bbc.com</button>
+        </div>
+        <div class="field">
+          <label for="src-text">Мақала тақырыбы немесе мәтіні (міндетті емес)</label>
+          <textarea id="src-text" class="textarea" style="min-height:100px" maxlength="5000" placeholder="Ұқсас жарияланымдарды іздеу үшін тақырыпты енгізуге болады"></textarea>
+        </div>
+        <div class="form-row">
+          <span class="hint" style="font-size:12.5px;color:var(--dim)">Талдау 5–15 секунд алуы мүмкін: сайт, домен тізілімі және энциклопедия сұралады.</span>
+          <button type="submit" class="btn btn-primary"><span class="spinner"></span><span class="btn-icon">{{ m.icon('search') }}</span> Дереккөзді талдау</button>
+        </div>
+      </form>
+      <div class="result" id="src-result" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/scenes.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initSource();</script>
+{% endblock %}

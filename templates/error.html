@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} — AQIQAT AI{% endblock %}
+{% block content %}
+<div class="container" style="min-height:calc(100vh - 300px);display:grid;place-items:center;text-align:center;padding:60px 16px">
+  <div>
+    <div style="font-family:var(--font-display);font-size:clamp(80px,14vw,160px);font-weight:700;line-height:1;background:linear-gradient(95deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent">{{ code }}</div>
+    <p style="font-size:20px;margin:16px 0 26px">{{ message }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Басты бетке оралу</a>
+  </div>
+</div>
+{% endblock %}

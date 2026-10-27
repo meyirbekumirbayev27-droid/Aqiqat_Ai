@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}{{ TOOLS[item.tool].title }} — тарих — AQIQAT AI{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:36px;padding-bottom:60px;max-width:1000px">
+  <nav class="crumbs"><a href="{{ url_for('index') }}">Басты бет</a><span>/</span><a href="{{ url_for('history') }}">Тексеру тарихы</a><span>/</span><span>#{{ item.id }}</span></nav>
+  <span class="kicker">{{ TOOLS[item.tool].title }} · {{ item.created_at }}</span>
+  <h1 style="font-family:var(--font-display);font-weight:600;font-size:clamp(20px,2.4vw,30px);margin:10px 0 22px;word-break:break-word">{{ item.title }}</h1>
+  <div class="card checker">
+    <div class="result" id="hist-result"></div>
+    {% if item.tool == 'media' %}<div class="note">ELA суреті тарихта сақталмайды — тек оның көрсеткіштері.</div>{% endif %}
+    {% if item.tool == 'privacy' %}<div class="note">Құпиялылық үшін түпнұсқа мәтін сақталмаған — тек табылған дерек түрлері.</div>{% endif %}
+  </div>
+  <div class="copy-row" style="margin-top:20px">
+    <a href="{{ url_for('history') }}" class="btn btn-ghost">← Тарихқа оралу</a>
+    <a href="{{ url_for(TOOLS[item.tool].endpoint) }}{{ '#check' if item.tool == 'factcheck' }}" class="btn btn-primary">Жаңа тексеру</a>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script id="hist-data" type="application/json">{{ result|tojson }}</script>
+<script>AQ.renderHistory({{ item.tool|tojson }}, JSON.parse(document.getElementById('hist-data').textContent));</script>
+{% endblock %}

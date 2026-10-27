@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}AQIQAT AI — Жалған ақпаратты анықта{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="dot"></span>Жасанды интеллект • Фактчекинг • Цифрлық қауіпсіздік</span>
+      <h1>Жалған ақпаратты анықта.<br><span class="grad">Шындықты қорға.</span></h1>
+      <p class="lead">Жасанды интеллект көмегімен ақпаратты талдап, дереккөздерді зерттеп, күмәнді мәлімдемелерді тексер.</p>
+      <div class="hero-cta">
+        <a href="#check" class="btn btn-primary">{{ m.icon('search') }} Ақпаратты тексеру</a>
+        <a href="#features" class="btn btn-ghost">Мүмкіндіктерді зерттеу {{ m.icon('arrow') }}</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>6</strong><span>интеллектуалды құрал</span></div>
+        <div><strong>3</strong><span>тіл: қаз, орыс, ағыл.</span></div>
+        <div><strong>0</strong><span>ойдан шығарылған дереккөз</span></div>
+      </div>
+    </div>
+    <div class="globe-wrap" id="globe" aria-hidden="true">
+      <div class="globe-fallback"></div>
+      <div class="globe-badge b1"><b><span class="lvl" style="background:var(--green);box-shadow:0 0 8px var(--green)"></span>Дереккөзді талдау</b><small>Домен • автор • жарияланған күн</small></div>
+      <div class="globe-badge b2"><b><span class="lvl" style="background:var(--red);box-shadow:0 0 8px var(--red)"></span>Алаяқтық белгісі</b><small>Күмәнді домен • SMS-код сұрау</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="check" style="padding-top:20px">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker">Негізгі анықтағыш</span>
+      <h2>Күмәнді мәлімдемені тексеріңіз</h2>
+      <p>Жаңалықты, әлеуметтік желі жазбасын немесе естіген ақпаратты енгізіңіз. Жүйе мәтін белгілерін талдап, Wikipedia-дан нақты материалдарды іздейді және AI моделімен салыстырады.</p>
+    </div>
+    <div class="card checker reveal">
+      <div class="checker-head">
+        <h3>Ақпаратты тексеру</h3>
+        {% if ai.provider %}
+        <span class="ai-chip"><i></i>AI моделі қосулы: {{ ai.model }}</span>
+        {% else %}
+        <span class="ai-chip off"><i></i>AI моделі қосылмаған — тек белгілер мен дереккөздер</span>
+        {% endif %}
+      </div>
+      {% if user %}
+      <form id="fc-form" novalidate>
+        <div class="field">
+          <label for="fc-text">Мәлімдеме немесе жаңалық мәтіні</label>
+          <textarea id="fc-text" class="textarea" maxlength="5000" placeholder="Мысалы: «Ертеңнен бастап барлық банк карталары бұғатталады, бұл хабарды бәріне таратыңыз!»" required></textarea>
+        </div>
+        <div class="examples">
+          <button type="button" class="chip-btn" data-fill="fc-text" data-text="Қазақстанның астанасы — Астана қаласы, ол 1997 жылдан бері ел астанасы.">Мысал: астана</button>
+          <button type="button" class="chip-btn" data-fill="fc-text" data-text="ШҰҒЫЛ!!! Дәрігерлер жасырып жүр: лимон мен сода қатерлі ісікті бір аптада 100% толық емдейді! Барлығына таратыңыз!">Мысал: жалған денсаулық</button>
+          <button type="button" class="chip-btn" data-fill="fc-text" data-text="Байқоңыр ғарыш айлағы Қызылорда облысында орналасқан.">Мысал: Байқоңыр</button>
+        </div>
+        <div class="form-row">
+          <span class="char-count" data-count="fc-text">0 / 5000</span>
+          <button type="submit" class="btn btn-primary"><span class="spinner"></span><span class="btn-icon">{{ m.icon('search') }}</span> Ақпаратты тексеру</button>
+        </div>
+      </form>
+      <div class="result" id="fc-result" aria-live="polite"></div>
+      {% else %}
+      <div class="state-box empty">
+        <span style="font-size:30px">🔐</span>
+        <div><b>Тексеру үшін жүйеге кіріңіз</b><small>Тіркелгеннен кейін барлық алты құрал мен тексеру тарихы қолжетімді болады.</small></div>
+      </div>
+      <div class="hero-cta" style="margin-top:18px">
+        <a href="{{ url_for('login', next='/#check') }}" class="btn btn-primary">Кіру</a>
+        <a href="{{ url_for('register') }}" class="btn btn-ghost">Тіркелу</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head center reveal">
+      <span class="kicker">Функциялар</span>
+      <h2>Цифрлық шындыққа арналған алты құрал</h2>
+      <p>Дереккөзден бастап жеке деректердің қауіпсіздігіне дейін — әр құрал нақты дәлелдерге сүйеніп, шектеулерін ашық көрсетеді.</p>
+    </div>
+    <div class="features-grid">
+      {% for f in FEATURES %}
+      <a href="{{ url_for(f.endpoint) }}" class="card feature-card acc-{{ f.accent }} reveal" style="transition-delay:{{ loop.index0 * 60 }}ms">
+        <span class="fc-glow"></span>
+        <span class="fc-icon">{{ f.emoji }}</span>
+        <h3>{{ f.title }}</h3>
+        <p>{{ f.text }}</p>
+        <span class="fc-go">Ашу {{ m.icon('arrow') }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="kicker">Қалай жұмыс істейді</span>
+      <h2>Дәлелге негізделген талдау</h2>
+      <p>Жүйе «100% шын» немесе «100% жалған» деп мәлімдемейді. Ол белгілерді, дереккөздерді және белгісіздік деңгейін ашық көрсетеді.</p>
+    </div>
+    <div class="steps">
+      <div class="card step reveal"><span class="st-ic">{{ m.icon('doc') }}</span><h4>Енгізу</h4><p>Мәтінді, сілтемені немесе файлды жүктейсіз. Деректер тексеріліп, шектеулер сақталады.</p></div>
+      <div class="card step reveal"><span class="st-ic">{{ m.icon('layers') }}</span><h4>Белгілерді талдау</h4><p>Манипуляция, алаяқтық және дезинформацияға тән тілдік үлгілер анықталады.</p></div>
+      <div class="card step reveal"><span class="st-ic">{{ m.icon('link') }}</span><h4>Дереккөздерді іздеу</h4><p>Wikipedia, RDAP домен тізілімі және сайттың өз метадеректері нақты сұралады.</p></div>
+      <div class="card step reveal"><span class="st-ic">{{ m.icon('shield') }}</span><h4>Абай тұжырым</h4><p>«Шынайы болуы мүмкін», «Жалған болуы мүмкін» немесе «Дәлел жеткіліксіз» — түсіндірмемен.</p></div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/globe.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initFactcheck && AQ.initFactcheck();</script>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Жеке деректер қауіпсіздігі — AQIQAT AI{% endblock %}
+{% block body_class %}page-privacy{% endblock %}
+{% block content %}
+<div class="container tool-layout">
+  {{ m.tool_sidebar('privacy') }}
+  <div>
+    {{ m.tool_header(FEATURES[4], 'AI Privacy Checker', 'Жеке деректердің қауіпсіздігін тексеру',
+       'Жарияламас бұрын мәтінде телефон, ЖСН, карта нөмірі, құпиясөз немесе API кілті сияқты құпия ақпарат бар-жоғын тексеріңіз.', 'lock') }}
+    <div class="card checker">
+      <form id="pv-form" novalidate>
+        <div class="field">
+          <label for="pv-text">Жарияланатын мәтін</label>
+          <textarea id="pv-text" class="textarea lg" maxlength="8000" placeholder="Пост, хабарландыру немесе хат мәтінін қойыңыз"></textarea>
+          <span class="hint">🔒 Мәтін серверде сақталмайды — тарихқа тек табылған дерек түрлерінің саны жазылады.</span>
+        </div>
+        <div class="examples">
+          <button type="button" class="chip-btn" data-fill="pv-text" data-text="Сәлеметсіз бе! Пәтерді жалға беремін. Хабарласыңыз: +7 701 123 45 67, aigerim.sample@gmail.com. Мекенжай: Абай көшесі, 15 үй, 23 пәтер. Шарт үшін ЖСН: 950315400125. Wi-Fi пароль: Qwerty2024">Мысал: хабарландыру</button>
+          <button type="button" class="chip-btn" data-fill="pv-text" data-text="Жобаны іске қосу үшін .env файлына API_KEY=sk-proj-Ab12Cd34Ef56Gh78Ij90KlMnOpQr қойыңыз. Карта: 4111 1111 1111 1111">Мысал: код</button>
+        </div>
+        <div class="form-row">
+          <span class="char-count" data-count="pv-text">0 / 8000</span>
+          <button type="submit" class="btn btn-primary"><span class="spinner"></span><span class="btn-icon">{{ m.icon('shield') }}</span> Қауіпсіздікті тексеру</button>
+        </div>
+      </form>
+      <div class="result" id="pv-result" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/scenes.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initPrivacy();</script>
+{% endblock %}

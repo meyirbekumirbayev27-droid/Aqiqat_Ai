@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Кіру — AQIQAT AI{% endblock %}
+{% block content %}
+<div class="container auth-wrap">
+  <div class="auth-side reveal">
+    <span class="eyebrow"><span class="dot"></span>Қауіпсіз кіру</span>
+    <h2>Шындыққа жол <span style="background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent">бір қадамнан</span> басталады</h2>
+    <ul>
+      <li><span>🌐</span>Алты интеллектуалды тексеру құралы</li>
+      <li><span>🕘</span>Барлық тексерулеріңіздің жеке тарихы</li>
+      <li><span>🎮</span>Ойын нәтижелері мен жетістіктер</li>
+      <li><span>🔐</span>Құпиясөз шифрланған түрде сақталады</li>
+    </ul>
+  </div>
+  <div class="card auth-card">
+    <h1>Қайта қош келдіңіз</h1>
+    <p>Логин мен құпиясөзді енгізіп, жүйеге кіріңіз.</p>
+    <form method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="next" value="{{ request.args.get('next', request.form.get('next', '')) }}">
+      <div class="field">
+        <label for="username">Логин</label>
+        <input id="username" name="username" class="input" autocomplete="username" required value="{{ username or '' }}" autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Құпиясөз</label>
+        <div class="pw-field">
+          <input id="password" name="password" type="password" class="input" autocomplete="current-password" required>
+          <button type="button" class="pw-toggle" aria-label="Құпиясөзді көрсету">{{ m.icon('eye') }}</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" name="remember" value="1"> Мені есте сақта (14 күн)</label>
+      <button type="submit" class="btn btn-primary" style="width:100%">Кіру {{ m.icon('arrow') }}</button>
+    </form>
+    <p class="auth-alt">Аккаунтыңыз жоқ па? <a href="{{ url_for('register') }}">Тіркелу</a></p>
+  </div>
+</div>
+{% endblock %}

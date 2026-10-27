@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Сурет пен видеоны тексеру — AQIQAT AI{% endblock %}
+{% block body_class %}page-media{% endblock %}
+{% block content %}
+<div class="container tool-layout">
+  {{ m.tool_sidebar('media') }}
+  <div>
+    {{ m.tool_header(FEATURES[1], 'Image & Video Checker', 'Сурет пен видеоның түпнұсқалығын тексеру',
+       'Медианың метадеректерін, өңдеу белгілерін, AI генерация іздерін және ELA қысу картасын зерттеңіз.', 'media') }}
+    <div class="card checker">
+      <form id="media-form" novalidate>
+        <label class="dropzone" id="dropzone">
+          <span class="dz-ic">{{ m.icon('upload') }}</span>
+          <b>Файлды осында сүйреп әкеліңіз</b>
+          <small>немесе <span style="color:var(--accent);font-weight:600">файл таңдау</span> үшін басыңыз</small>
+          <div class="formats"><span>JPG</span><span>PNG</span><span>WEBP</span><span>GIF</span><span>≤ 15 МБ</span><span>MP4</span><span>MOV</span><span>WEBM</span><span>≤ 60 МБ</span></div>
+          <input type="file" id="media-file" accept=".jpg,.jpeg,.png,.webp,.gif,.mp4,.mov,.webm,.m4v,image/*,video/*" aria-label="Файл таңдау">
+        </label>
+        <div class="preview" id="preview">
+          <div class="pv-media" id="pv-media"></div>
+          <div>
+            <b id="pv-name"></b>
+            <small id="pv-meta"></small>
+            <div class="copy-row">
+              <button type="submit" class="btn btn-primary"><span class="spinner"></span><span class="btn-icon">{{ m.icon('search') }}</span> Медианы талдау</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="pv-clear">Басқа файл</button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="result" id="media-result" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/scenes.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initMedia();</script>
+{% endblock %}

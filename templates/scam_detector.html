@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Алаяқтықты анықтау — AQIQAT AI{% endblock %}
+{% block body_class %}page-scam{% endblock %}
+{% block content %}
+<div class="container tool-layout">
+  {{ m.tool_sidebar('scam') }}
+  <div>
+    {{ m.tool_header(FEATURES[2], 'Scam & Fraud Detector', 'Алаяқтық хабарламаларды тексеру',
+       'Күмәнді SMS, электрондық хат, сілтеме немесе мессенджер хабарламасындағы алаяқтық белгілерін анықтаңыз.', 'phone') }}
+    <div class="card checker">
+      <form id="scam-form" novalidate>
+        <div class="field">
+          <label for="scam-text">Хабарлама мәтіні</label>
+          <textarea id="scam-text" class="textarea" maxlength="6000" placeholder="Күмәнді SMS немесе хат мәтінін осында қойыңыз"></textarea>
+        </div>
+        <div class="examples">
+          <button type="button" class="chip-btn" data-fill="scam-text" data-text="Құрметті клиент! Сіздің Kaspi картаңыз бұғатталды. 24 сағат ішінде қалпына келтіру үшін kaspi-bonus-kz.xyz/login сілтемесіне өтіп, SMS-кодты енгізіңіз. Шұғыл!">Мысал: банк фишингі</button>
+          <button type="button" class="chip-btn" data-fill="scam-text" data-text="Құттықтаймыз! Сіз iPhone 16 ұтып алдыңыз! Сыйлықты алу үшін жеткізу комиссиясы 5000 теңгені мына нөмірге аударыңыз: +7 701 000 00 00">Мысал: жалған ұтыс</button>
+          <button type="button" class="chip-btn" data-fill="scam-text" data-text="Сәлем! Ертең сағат 15:00-де кездесу кеңседе өтеді. Құжаттарды ала келіңіз.">Мысал: қалыпты хабар</button>
+        </div>
+        <div class="field">
+          <label for="scam-url">Қосымша сілтеме (міндетті емес)</label>
+          <input id="scam-url" class="input" type="text" inputmode="url" autocomplete="off" maxlength="2000" placeholder="https://...">
+          <span class="hint">Мәтіндегі сілтемелер автоматты түрде тексеріледі. Сілтеме ашылмайды — тек құрылымы мен домені талданады.</span>
+        </div>
+        <div class="form-row">
+          <span class="char-count" data-count="scam-text">0 / 6000</span>
+          <button type="submit" class="btn btn-primary"><span class="spinner"></span><span class="btn-icon">{{ m.icon('shield') }}</span> Алаяқтық белгілерін тексеру</button>
+        </div>
+      </form>
+      <div class="result" id="scam-result" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/scenes.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initScam();</script>
+{% endblock %}

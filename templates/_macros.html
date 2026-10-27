@@ -1,0 +1,58 @@
+{% macro icon(name) -%}
+{%- if name == 'arrow' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+{%- elif name == 'search' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+{%- elif name == 'chevron' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+{%- elif name == 'menu' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+{%- elif name == 'close' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+{%- elif name == 'history' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>
+{%- elif name == 'logout' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+{%- elif name == 'eye' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+{%- elif name == 'trash' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+{%- elif name == 'upload' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+{%- elif name == 'shield' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+{%- elif name == 'layers' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/></svg>
+{%- elif name == 'doc' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+{%- elif name == 'link' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+{%- elif name == 'play' -%}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8L7 4Z"/></svg>
+{%- elif name == 'refresh' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro logo_mark() -%}
+<svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+  <defs>
+    <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#55E7FF"/><stop offset=".55" stop-color="#387BFF"/><stop offset="1" stop-color="#A56BFF"/></linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="14" fill="none" stroke="url(#lg1)" stroke-width="2.4"/>
+  <ellipse cx="24" cy="24" rx="22" ry="8" fill="none" stroke="url(#lg1)" stroke-width="1.6" transform="rotate(-28 24 24)" opacity=".85"/>
+  <path d="M17 30 24 15l7 15M19.8 25h8.4" fill="none" stroke="#F5F7FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="42" cy="13.5" r="2.4" fill="#55E7FF"/>
+</svg>
+{%- endmacro %}
+
+{% macro tool_sidebar(active) -%}
+<aside class="sidebar card" aria-label="Функциялар">
+  <div class="sb-title">Функциялар</div>
+  <a href="{{ url_for('index') }}#check"><span class="sb-e">✨</span>Ақпаратты тексеру</a>
+  {% for f in FEATURES %}
+  <a href="{{ url_for(f.endpoint) }}" class="{{ 'active' if f.key == active }}"{% if f.key == active %} aria-current="page"{% endif %}><span class="sb-e">{{ f.emoji }}</span>{{ f.title }}</a>
+  {% endfor %}
+  <hr>
+  <a href="{{ url_for('history') }}"><span class="sb-e">🕘</span>Тексеру тарихы</a>
+  <a href="{{ url_for('learn') }}"><span class="sb-e">📚</span>Білім орталығы</a>
+</aside>
+{%- endmacro %}
+
+{% macro tool_header(feature, tag, title, text, scene) -%}
+<nav class="crumbs" aria-label="Навигация жолы">
+  <a href="{{ url_for('index') }}">Басты бет</a><span>/</span><a href="{{ url_for('index') }}#features">Функциялар</a><span>/</span><span>{{ feature.title }}</span>
+</nav>
+<div class="tool-hero">
+  <div>
+    <span class="tag">{{ feature.emoji }} {{ tag }}</span>
+    <h1>{{ title }}</h1>
+    <p>{{ text }}</p>
+  </div>
+  <div class="scene" data-scene="{{ scene }}" aria-hidden="true"><div class="scene-fallback">{{ feature.emoji }}</div></div>
+</div>
+{%- endmacro %}

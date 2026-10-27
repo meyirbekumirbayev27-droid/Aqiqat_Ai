@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Білім орталығы — AQIQAT AI{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:36px;padding-bottom:40px">
+  <nav class="crumbs"><a href="{{ url_for('index') }}">Басты бет</a><span>/</span><span>Білім орталығы</span></nav>
+  <div class="section-head">
+    <span class="kicker">Медиа сауаттылық</span>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.6vw,46px);margin:12px 0 14px;line-height:1.12">Білім орталығы</h1>
+    <p>Жалған ақпаратты тануға, алаяқтардан қорғануға және жеке деректерді сақтауға арналған қысқа әрі практикалық нұсқаулықтар.</p>
+  </div>
+  <div class="learn-grid">
+    <article class="card learn-card reveal">
+      <span class="lc-ic">🧭</span>
+      <h3>Ақпаратты тексерудің 5 қадамы</h3>
+      <ul>
+        <li><b>Тоқта.</b> Қатты эмоция тудырған хабарды бірден таратпа.</li>
+        <li><b>Дереккөзді тап.</b> Кім жазды? Түпнұсқа жарияланым қайда?</li>
+        <li><b>Салыстыр.</b> Кемінде екі тәуелсіз, беделді дереккөзден ізде.</li>
+        <li><b>Күнін тексер.</b> Ескі жаңалық жаңа болып таратылуы мүмкін.</li>
+        <li><b>Дәлелді сұра.</b> Сандар мен дәйексөздердің шығу тегі қандай?</li>
+      </ul>
+    </article>
+    <article class="card learn-card reveal">
+      <span class="lc-ic">🚨</span>
+      <h3>Алаяқтықтың жиі белгілері</h3>
+      <ul>
+        <li>SMS-код, PIN, CVV немесе құпиясөзді сұрау.</li>
+        <li>«24 сағат ішінде», «шұғыл» деп асықтыру.</li>
+        <li>«Ұтып алдыңыз» деп, сыйлық үшін комиссия талап ету.</li>
+        <li>Ресми брендке ұқсас, бірақ басқа домен (kaspi-bonus.xyz).</li>
+        <li>Күмәнді болса — <b>102</b> нөміріне немесе банкіңізге хабарласыңыз.</li>
+      </ul>
+    </article>
+    <article class="card learn-card reveal">
+      <span class="lc-ic">🧠</span>
+      <h3>Манипуляциялық тәсілдер</h3>
+      <ul>
+        <li><b>Эмоциялық қысым:</b> «сұмдық», «шок», «жүрегің ауырады».</li>
+        <li><b>Қорқыту:</b> апатты әсірелеу, үрей тудыру.</li>
+        <li><b>Негізсіз жалпылау:</b> «барлығы біледі», «ешкім айтпайды».</li>
+        <li><b>Қастандық риторикасы:</b> «билік жасырады», «БАҚ үндемейді».</li>
+        <li>Манипуляция бар болса, ақпарат міндетті түрде жалған емес — бірақ сақ болыңыз.</li>
+      </ul>
+    </article>
+    <article class="card learn-card reveal">
+      <span class="lc-ic">🖼️</span>
+      <h3>Сурет пен видеоны тексеру</h3>
+      <ul>
+        <li>Кері сурет іздеу: Google Lens, Yandex, TinEye.</li>
+        <li>Көлеңке, саусақ, мәтін, шағылыс сияқты бөлшектерге қараңыз — AI генерацияда жиі қате болады.</li>
+        <li>Видеодан кілт кадрларды алып, оларды да кері іздеңіз.</li>
+        <li>Метадеректерді өшіруге не өзгертуге болады — олар тек қосымша белгі.</li>
+      </ul>
+    </article>
+    <article class="card learn-card reveal">
+      <span class="lc-ic">🔐</span>
+      <h3>Жеке деректерді қорғау</h3>
+      <ul>
+        <li>ЖСН, карта нөмірі, үй мекенжайын ашық жарияламаңыз.</li>
+        <li>Әр сайтқа бөлек, күрделі құпиясөз және екі факторлы аутентификация.</li>
+        <li>Суреттегі GPS координаттарын жарияламас бұрын өшіріңіз.</li>
+        <li>API кілттерін кодқа емес, .env файлына сақтаңыз.</li>
+      </ul>
+    </article>
+    <article class="card learn-card reveal">
+      <span class="lc-ic">📚</span>
+      <h3>Пайдалы ресурстар</h3>
+      <ul>
+        <li><a href="https://factcheck.kz/" target="_blank" rel="noopener">Factcheck.kz</a> — қазақстандық фактчекинг.</li>
+        <li><a href="https://www.gov.kz/" target="_blank" rel="noopener">gov.kz</a> — мемлекеттік органдардың ресми ақпараты.</li>
+        <li><a href="https://contentcredentials.org/verify" target="_blank" rel="noopener">Content Credentials</a> — медианың шығу тегін тексеру.</li>
+        <li><a href="https://tineye.com/" target="_blank" rel="noopener">TinEye</a> — кері сурет іздеу.</li>
+      </ul>
+    </article>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Біз туралы — AQIQAT AI{% endblock %}
+{% block content %}
+<div class="container" style="padding-top:36px;padding-bottom:40px">
+  <nav class="crumbs"><a href="{{ url_for('index') }}">Басты бет</a><span>/</span><span>Біз туралы</span></nav>
+  <div class="prose">
+    <span class="kicker">Жоба туралы</span>
+    <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.6vw,46px);margin:12px 0 18px;line-height:1.12">Біз туралы</h1>
+    <p><b>AQIQAT AI</b> — «Жасанды интеллект көмегімен жалған ақпаратты анықтау жүйесі» жобасы. «Ақиқат» сөзі шындықты білдіреді: біздің мақсатымыз — адамдарға ақпараттың шынайылығын өз бетінше бағалауға көмектесу.</p>
+    <p>Платформа ақпаратты тексеру, дереккөзді зерттеу, медианы талдау, алаяқтық пен манипуляцияны анықтау, жеке деректерді қорғау және сыни ойлауды ойын арқылы дамыту құралдарын біріктіреді.</p>
+
+    <h2 id="responsible">Жауапты AI қағидалары</h2>
+    <ul>
+      <li>Жүйе дереккөз, сілтеме немесе домен деректерін <b>ойлап таппайды</b>. Тек нақты алынған деректер көрсетіледі.</li>
+      <li>Нәтижелер абай тұжырыммен беріледі: «Шынайы болуы мүмкін», «Жалған болуы мүмкін», «Тексеруге дәлел жеткіліксіз».</li>
+      <li>AI түсіндірмесі мен сыртқы дереккөздер бөлек көрсетіледі.</li>
+      <li>Қызмет қолжетімсіз болса, жүйе талдау сәтті өтті деп көрсетпейді — шектеуді ашық айтады.</li>
+    </ul>
+    <div class="card card-pad" style="margin:20px 0">
+      <b>AI моделінің күйі:</b>
+      {% if ai.provider %}
+      <span class="badge good" style="margin-left:6px">Қосулы</span>
+      <p style="margin:10px 0 0">Провайдер: {{ 'Anthropic Claude' if ai.provider == 'anthropic' else 'Ollama (жергілікті)' }} · Модель: <span class="mono">{{ ai.model }}</span></p>
+      {% else %}
+      <span class="badge medium" style="margin-left:6px">Қосылмаған</span>
+      <p style="margin:10px 0 0">Ақпаратты тексеру тек мәтін белгілері мен Wikipedia дереккөздеріне сүйенеді. AI қосу үшін серверде <span class="mono">.env</span> файлына <span class="mono">ANTHROPIC_API_KEY</span> қойыңыз немесе Ollama іске қосыңыз.</p>
+      {% endif %}
+    </div>
+
+    <h2 id="privacy">Құпиялылық саясаты</h2>
+    <ul>
+      <li>Құпиясөздер тек хэштелген түрде (PBKDF2/scrypt) сақталады.</li>
+      <li>Тексеру тарихы тек сізге көрінеді және оны кез келген уақытта өшіре аласыз.</li>
+      <li>«Жеке деректер қауіпсіздігі» құралына енгізілген мәтін сақталмайды.</li>
+      <li>Жүктелген сурет пен видео дискке жазылмайды: талдау жадта жасалады және нәтиже ғана сақталады.</li>
+      <li>API кілттері тек серверде сақталады, браузерге жіберілмейді.</li>
+    </ul>
+
+    <h2 id="contact">Байланыс</h2>
+    <p>Ұсыныс немесе қате туралы хабарлау үшін: <a href="mailto:info@aqiqat.ai">info@aqiqat.ai</a></p>
+  </div>
+</div>
+{% endblock %}

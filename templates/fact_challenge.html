@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Шындықты анықта! — AQIQAT AI{% endblock %}
+{% block body_class %}page-quiz{% endblock %}
+{% block content %}
+<div class="container tool-layout">
+  {{ m.tool_sidebar('quiz') }}
+  <div>
+    {{ m.tool_header(FEATURES[5], 'AI Fact Challenge', 'Шындықты анықта!',
+       'Әр карточкадағы мәлімдемені бағалаңыз: шынайы ма, жалған ба, әлде дәлел жеткіліксіз бе? Әр жауаптан кейін түсіндірме мен дереккөз көрсетіледі.', 'cards') }}
+
+    <div class="quiz-top">
+      <div class="card qstat"><small>Ұпай</small><b id="q-score">0</b></div>
+      <div class="card qstat"><small>Деңгей</small><b id="q-level">—</b></div>
+      <div class="card qstat"><small>Қатарынан дұрыс</small><b id="q-streak">0</b></div>
+      <div class="card qstat"><small>Үздік нәтижең</small><b id="q-best">{{ best.best or 0 }}</b></div>
+    </div>
+    <div class="progress" aria-hidden="true"><i id="q-progress"></i></div>
+
+    <div class="card qcard" id="q-card">
+      <div id="q-intro">
+        <div style="font-size:52px;margin-bottom:10px">🎯</div>
+        <p class="q-claim" style="margin-bottom:12px">Сыни ойлауыңды сынап көр!</p>
+        <p style="color:var(--muted);margin:0 auto 26px;max-width:560px">Раундта 10 сұрақ. Дұрыс жауап — 10 ұпай, қатарынан дұрыс жауаптарға бонус беріледі. Ойнаған ойындар саны: {{ best.games or 0 }}.</p>
+        <div><button type="button" class="btn btn-primary" id="q-start"><span class="spinner"></span><span class="btn-icon">{{ m.icon('play') }}</span> Ойынды бастау</button></div>
+      </div>
+      <div id="q-play" hidden>
+        <div class="q-meta"><span class="badge info" id="q-num"></span><span class="badge" id="q-cat" style="color:var(--violet);background:rgba(165,107,255,.12)"></span></div>
+        <p class="q-claim" id="q-claim"></p>
+        <div class="answers">
+          <button type="button" class="ans true" data-answer="true">✓ Шынайы</button>
+          <button type="button" class="ans false" data-answer="false">✕ Жалған</button>
+          <button type="button" class="ans unknown" data-answer="unknown">? Дәлел жеткіліксіз</button>
+        </div>
+        <div id="q-feedback"></div>
+      </div>
+      <div id="q-end" hidden></div>
+    </div>
+
+    <div class="res-grid" style="margin-top:22px">
+      <div class="res-card">
+        <h5>Жетістіктер</h5>
+        <div class="ach-grid" id="ach-grid" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))">
+          {% for key, a in achievements.items() %}
+          <div class="ach" data-ach="{{ key }}"><div class="a-ic">{{ a.icon }}</div><b>{{ a.title }}</b><small>{{ a.desc }}</small></div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="res-card">
+        <h5>Үздік ойыншылар</h5>
+        <ol class="leader" id="leader"><li><span>Жүктелуде…</span></li></ol>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/scenes.js') }}?v=1"></script>
+<script src="{{ url_for('static', filename='js/tools.js') }}?v=1"></script>
+<script>AQ.initQuiz();</script>
+{% endblock %}

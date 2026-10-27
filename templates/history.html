@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Тексеру тарихы — AQIQAT AI{% endblock %}
+{% block content %}
+{% set emojis = {'factcheck': '✨', 'source': '🌐', 'media': '🖼️', 'scam': '🚨', 'manipulation': '🧠', 'privacy': '🔐', 'quiz': '🎮'} %}
+<div class="container" style="padding-top:36px;padding-bottom:60px">
+  <nav class="crumbs"><a href="{{ url_for('index') }}">Басты бет</a><span>/</span><span>Тексеру тарихы</span></nav>
+  <div class="form-row" style="margin-bottom:24px;align-items:flex-end">
+    <div>
+      <span class="kicker">Жеке кабинет</span>
+      <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.2vw,40px);margin:10px 0 6px">Тексеру тарихы</h1>
+      <p style="color:var(--muted);margin:0">{{ user.display_name }}, мұнда сіздің барлық талдауларыңыз сақталады. Тіркелген күні: {{ user.created_at[:10] }}.</p>
+    </div>
+    {% if total %}
+    <form method="post" action="{{ url_for('history_clear') }}" onsubmit="return confirm('Бүкіл тарихты өшіруді растайсыз ба? Бұл әрекетті қайтару мүмкін емес.')">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button class="btn btn-danger btn-sm" type="submit">{{ m.icon('trash') }} Тарихты тазарту</button>
+    </form>
+    {% endif %}
+  </div>
+
+  <div class="hist-stats">
+    <div class="card qstat"><small>Барлық тексеру</small><b>{{ total }}</b></div>
+    <div class="card qstat"><small>Ақпарат / дереккөз</small><b>{{ stats.get('factcheck', 0) + stats.get('source', 0) }}</b></div>
+    <div class="card qstat"><small>Алаяқтық / құпиялылық</small><b>{{ stats.get('scam', 0) + stats.get('privacy', 0) }}</b></div>
+    <div class="card qstat"><small>Ойын раундтары</small><b>{{ games|length }}</b></div>
+  </div>
+
+  <div class="filter-row">
+    <a href="{{ url_for('history') }}" class="{{ 'active' if not active_tool }}">Барлығы</a>
+    {% for key, t in TOOLS.items() if key != 'quiz' %}
+    <a href="{{ url_for('history', tool=key) }}" class="{{ 'active' if active_tool == key }}">{{ emojis[key] }} {{ t.title }}{% if stats.get(key) %} · {{ stats[key] }}{% endif %}</a>
+    {% endfor %}
+  </div>
+
+  {% if rows %}
+  <div class="hist-list">
+    {% for r in rows %}
+    <div class="hist-item">
+      <span class="h-ic">{{ emojis.get(r.tool, '•') }}</span>
+      <div style="min-width:0">
+        <a class="h-title" href="{{ url_for('history_item', item_id=r.id) }}">{{ r.title }}</a>
+        <small>{{ TOOLS[r.tool].title }} · {{ r.created_at }}</small>
+      </div>
+      <span class="badge {{ r.level }}">{{ r.verdict }}</span>
+      <form method="post" action="{{ url_for('history_delete', item_id=r.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="icon-btn" type="submit" aria-label="Өшіру" title="Өшіру">{{ m.icon('trash') }}</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card empty-state">
+    <div class="big">🛰️</div>
+    <p style="font-size:17px;color:var(--text);margin:0 0 6px">Әзірге тексерулер жоқ</p>
+    <p style="margin:0 0 22px">Кез келген құралды қолданыңыз — нәтиже осында автоматты түрде сақталады.</p>
+    <a href="{{ url_for('index') }}#check" class="btn btn-primary">Алғашқы тексеруді жасау</a>
+  </div>
+  {% endif %}
+
+  {% if games %}
+  <div class="res-card" style="margin-top:28px">
+    <h5>Соңғы ойын нәтижелері</h5>
+    <div class="hist-list">
+      {% for gm in games %}
+      <div class="hist-item" style="grid-template-columns:44px minmax(0,1fr) auto">
+        <span class="h-ic">🎮</span>
+        <div><b>{{ gm.score }} ұпай</b> <small>· {{ gm.correct }}/{{ gm.total }} дұрыс · ең ұзын серия {{ gm.best_streak }}</small><br><small>{{ gm.created_at }}</small></div>
+        <span class="badge {{ 'good' if gm.correct >= 8 else ('medium' if gm.correct >= 5 else 'bad') }}">{{ (gm.correct * 100 // gm.total) }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
