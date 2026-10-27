@@ -103,6 +103,7 @@
         <div>
           <h6>Ақпарат</h6>
           <ul>
+            {% if tg_bot %}<li><a href="https://t.me/{{ tg_bot }}" target="_blank" rel="noopener">✈️ Telegram бот</a></li>{% endif %}
             <li><a href="{{ url_for('learn') }}">Білім орталығы</a></li>
             <li><a href="{{ url_for('about') }}">Біз туралы</a></li>
             <li><a href="{{ url_for('about') }}#privacy">Құпиялылық саясаты</a></li>

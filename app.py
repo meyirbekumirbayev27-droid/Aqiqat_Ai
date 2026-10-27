@@ -13,7 +13,7 @@ from flask import (Flask, abort, flash, g, jsonify, redirect, render_template, r
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from services import db as dbm
-from services import factcheck, llm, manipulation, media, privacy, quiz, scam, source
+from services import factcheck, llm, manipulation, media, privacy, quiz, scam, source, telegram_bot
 from services.web import FetchError
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -108,7 +108,7 @@ def load_user():
 
 @app.before_request
 def csrf_protect():
-    if request.method == "POST":
+    if request.method == "POST" and not request.path.startswith("/telegram/"):
         token = request.headers.get("X-CSRF-Token") or request.form.get("csrf_token")
         if not token or not secrets.compare_digest(token, session.get("csrf", "")):
             if request.path.startswith("/api/"):
@@ -127,7 +127,41 @@ def security_headers(resp):
 
 @app.context_processor
 def inject_globals():
-    return {"csrf_token": session.get("csrf", ""), "user": g.get("user"), "TOOLS": TOOLS, "FEATURES": FEATURES}
+    return {"csrf_token": session.get("csrf", ""), "user": g.get("user"), "TOOLS": TOOLS, "FEATURES": FEATURES,
+            "tg_bot": telegram_bot.username()}
+
+
+def webhook_base():
+    """Telegram webhook тек негізгі (production) мекенжайға тіркеледі, preview жариялауларға емес."""
+    if os.environ.get("TELEGRAM_WEBHOOK_BASE"):
+        return os.environ["TELEGRAM_WEBHOOK_BASE"]
+    host = os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")
+    if host and os.environ.get("VERCEL_ENV") == "production":
+        return "https://" + host
+    return ""
+
+
+@app.before_request
+def telegram_setup():
+    if telegram_bot.enabled() and request.endpoint not in ("static", "telegram_webhook"):
+        try:
+            telegram_bot.ensure_webhook(webhook_base())
+        except Exception:
+            app.logger.exception("Telegram webhook баптау сәтсіз")
+
+
+@app.post("/telegram/webhook")
+def telegram_webhook():
+    if not telegram_bot.enabled():
+        abort(404)
+    if not secrets.compare_digest(request.headers.get("X-Telegram-Bot-Api-Secret-Token", ""), telegram_bot.secret()):
+        abort(403)
+    try:
+        telegram_bot.handle_update(request.get_json(silent=True) or {})
+    except Exception:
+        # Telegram қайта-қайта жібермеуі үшін әрқашан 200 қайтарамыз
+        app.logger.exception("Telegram жаңартуын өңдеу сәтсіз")
+    return "ok"
 
 
 def login_required(view):

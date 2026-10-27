@@ -41,6 +41,12 @@ CREATE TABLE IF NOT EXISTS quiz_results (
     achievements TEXT NOT NULL DEFAULT '[]',
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS tg_chats (
+    chat_id TEXT PRIMARY KEY,
+    mode TEXT,
+    quiz_json TEXT,
+    updated_at TEXT NOT NULL
+);
 """
 PG_SCHEMA = SQLITE_SCHEMA.replace("INTEGER PRIMARY KEY AUTOINCREMENT", "SERIAL PRIMARY KEY")
 

@@ -10,6 +10,7 @@
       <div class="hero-cta">
         <a href="#check" class="btn btn-primary">{{ m.icon('search') }} Ақпаратты тексеру</a>
         <a href="#features" class="btn btn-ghost">Мүмкіндіктерді зерттеу {{ m.icon('arrow') }}</a>
+        {% if tg_bot %}<a href="https://t.me/{{ tg_bot }}" class="btn btn-ghost" target="_blank" rel="noopener">✈️ Telegram бот</a>{% endif %}
       </div>
       <div class="hero-stats">
         <div><strong>6</strong><span>интеллектуалды құрал</span></div>
